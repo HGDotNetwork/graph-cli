@@ -125,7 +125,7 @@ module.exports = {
       return
     }
 
-    let hostedService = node.match(/thegraph.com/)
+    let hostedService = node.match(/hg.network/)
     let requestUrl = new URL(node)
     let client = createJsonRpcClient(requestUrl)
 
@@ -157,7 +157,7 @@ module.exports = {
             if (jsonRpcError.message.match(/subgraph name not found/)) {
               if (hostedService) {
                 print.info(`
-You may need to create it at https://thegraph.com/explorer/dashboard.`)
+You may need to create it at https://dashboard.hg.network.`)
               } else {
                 print.info(`
 Make sure to create the subgraph first by running the following command:
@@ -190,7 +190,7 @@ $ graph create --node ${node} ${subgraphName}`)
             if (hostedService) {
               print.success(
                 `Deployed to ${chalk.blue(
-                  `https://thegraph.com/explorer/subgraph/${subgraphName}`,
+                  `https://e.hg.network/subgraph/${subgraphName}`,
                 )}`,
               )
             } else {

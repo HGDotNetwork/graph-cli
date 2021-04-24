@@ -9,6 +9,7 @@ const { ascTypeForEthereum, valueTypeForAsc } = require('./codegen/types')
 const ABI = require('./abi')
 const AbiCodeGenerator = require('./codegen/abi')
 const util = require('./codegen/util')
+const { urlMap } = require("./network")
 
 const abiEvents = abi =>
   util.disambiguateNames({
@@ -17,9 +18,14 @@ const abiEvents = abi =>
     setName: (event, name) => event.set('_alias', name),
   })
 
-// package.json
 
-const generatePackageJson = ({ subgraphName }) =>
+const generatePackageJson = ({ subgraphName , network}) =>{
+  if(!urlMap[network]){
+    network = "other"
+  }
+  let nodeUrl = urlMap[network]['node'];
+  let ipfsUrl = urlMap[network]['ipfs'];
+  
   prettier.format(
     JSON.stringify({
       name: getSubgraphBasename(subgraphName),
@@ -29,8 +35,8 @@ const generatePackageJson = ({ subgraphName }) =>
         build: 'graph build',
         deploy:
           `graph deploy ` +
-          `--node https://api.thegraph.com/deploy/ ` +
-          `--ipfs https://api.thegraph.com/ipfs/ ` +
+          `--node ${nodeUrl} ` +
+          `--ipfs ${ipfsUrl} ` +
           subgraphName,
         'create-local': `graph create --node http://localhost:8020/ ${subgraphName}`,
         'remove-local': `graph remove --node http://localhost:8020/ ${subgraphName}`,
@@ -47,6 +53,7 @@ const generatePackageJson = ({ subgraphName }) =>
     }),
     { parser: 'json' },
   )
+}
 
 // Subgraph manifest
 

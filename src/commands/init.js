@@ -4,6 +4,7 @@ const immutable = require('immutable')
 const os = require('os')
 const path = require('path')
 const toolbox = require('gluegun/toolbox')
+const { urlMap } = require("../network")
 
 const {
   getSubgraphBasename,
@@ -30,7 +31,7 @@ ${chalk.dim('Choose mode with one of:')}
 ${chalk.dim('Options for --from-contract:')}
 
       --abi <path>              Path to the contract ABI (default: download from Etherscan)
-      --network <mainnet|kovan|rinkeby|ropsten|goerli|poa-core|poa-sokol|xdai|matic|mumbai|fantom|bsc|clover>
+      --network <mainnet|kovan|rinkeby|ropsten|goerli|poa-core|poa-sokol|xdai|matic|mumbai|fantom|bsc|heco|clover>
                                 Selects the network the contract is deployed to
       --index-events            Index contract events as entities
       --contract-name           Name of the contract (default: Contract)      
@@ -53,6 +54,7 @@ const processInitForm = async (
     'mumbai',
     'fantom',
     'bsc',
+    'heco',
     'clover',
   ]
   let addressPattern = /^(0x)?[0-9a-fA-F]{40}$/
@@ -208,16 +210,22 @@ const loadAbiFromBlockScout = async (network, address) =>
     },
   )
 
-const loadAbiFromEtherscan = async (network, address) =>
+const loadAbiFromEtherscan = async (network, address) =>{
+  let explorer = urlMap['other']['explorer'];
+  let apiDomain = `https://${
+          network === 'mainnet' ? 'api' : `api-${network}`
+        }.etherscan.io`
+  
+  if(urlMap[network]){
+    apiDomain = urlMap[network]['apiUrl']
+  }
   await withSpinner(
-    `Fetching ABI from Etherscan`,
-    `Failed to fetch ABI from Etherscan`,
-    `Warnings while fetching ABI from Etherscan`,
+    `Fetching ABI from ${explorer}`,
+    `Failed to fetch ABI from  ${explorer}`,
+    `Warnings while fetching ABI from  ${explorer}`,
     async spinner => {
       let result = await fetch(
-        `https://${
-          network === 'mainnet' ? 'api' : `api-${network}`
-        }.etherscan.io/api?module=contract&action=getabi&address=${address}`,
+        `${apiDomain}/api?module=contract&action=getabi&address=${address}`,
       )
       let json = await result.json()
 
@@ -231,6 +239,7 @@ const loadAbiFromEtherscan = async (network, address) =>
       }
     },
   )
+}
 
 const loadAbiFromFile = async filename => {
   let exists = await toolbox.filesystem.exists(filename)
@@ -329,6 +338,7 @@ module.exports = {
         toolbox,
         { allowSimpleName, directory, subgraphName },
         { commands },
+        network,
       )
     }
 
@@ -400,6 +410,7 @@ module.exports = {
           directory: inputs.directory,
         },
         { commands },
+        network,
       )
     } else {
       await initSubgraphFromContract(
@@ -479,7 +490,7 @@ const runCodegen = async (toolbox, directory, codegenCommand) =>
     },
   )
 
-const printNextSteps = (toolbox, { subgraphName, directory }, { commands }) => {
+const printNextSteps = (toolbox, { subgraphName, directory }, { commands }, network) => {
   let { print } = toolbox
 
   let relativeDir = path.relative(process.cwd(), directory)
@@ -487,29 +498,36 @@ const printNextSteps = (toolbox, { subgraphName, directory }, { commands }) => {
   // Print instructions
   print.success(
     `
-Subgraph ${print.colors.blue(subgraphName)} created in ${print.colors.blue(relativeDir)}
+Subgraph ${print.colors.blue(subgraphName)} created in ${print.colors.blue(relativeDir)} for network ${network}
 `,
   )
+  let deployUrl = "https://api.thegraph.com/deploy/"
+  if(network) {
+    if(urlMap[network]){
+      deployUrl =  urlMap[network]['deployUrl']
+    }
+  } 
   print.info(`Next steps:
-
+  
   1. Run \`${print.colors.muted(
-    'graph auth https://api.thegraph.com/deploy/ <access-token>',
+    `graph auth ${deployUrl} <access-token>`,
   )}\`
      to authenticate with the hosted service. You can get the access token from
-     https://thegraph.com/explorer/dashboard/.
+     https://dashboard.hg.network/.
 
   2. Type \`${print.colors.muted(`cd ${relativeDir}`)}\` to enter the subgraph.
 
   3. Run \`${print.colors.muted(commands.deploy)}\` to deploy the subgraph to
-     https://thegraph.com/explorer/subgraph/${subgraphName}.
+     https://e.hg.network/subgraph/${subgraphName}.
 
-Make sure to visit the documentation on https://thegraph.com/docs/ for further information.`)
+Make sure to visit the documentation on https://docs.hg.network for further information.`)
 }
 
 const initSubgraphFromExample = async (
   toolbox,
   { allowSimpleName, subgraphName, directory },
   { commands },
+  network,
 ) => {
   let { filesystem, print, system } = toolbox
 
@@ -597,7 +615,7 @@ const initSubgraphFromExample = async (
     return
   }
 
-  printNextSteps(toolbox, { subgraphName, directory }, { commands })
+  printNextSteps(toolbox, { subgraphName, directory }, { commands }, network)
 }
 
 const initSubgraphFromContract = async (
@@ -674,5 +692,5 @@ const initSubgraphFromContract = async (
     return
   }
 
-  printNextSteps(toolbox, { subgraphName, directory }, { commands })
+  printNextSteps(toolbox, { subgraphName, directory }, { commands }, network)
 }

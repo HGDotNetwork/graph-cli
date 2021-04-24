@@ -3,13 +3,13 @@ Subgraph user/subgraph-from-contract-with-abi created in from-contract-with-abi
 
 Next steps:
 
-  1. Run `graph auth https://api.thegraph.com/deploy/ <access-token>`
+  1. Run `graph auth  https://deploy.hg.network/ <access-token>`
      to authenticate with the hosted service. You can get the access token from
-     https://thegraph.com/explorer/dashboard/.
+     https://dashboard.hg.network/.
 
   2. Type `cd from-contract-with-abi` to enter the subgraph.
 
   3. Run `yarn deploy` to deploy the subgraph to
-     https://thegraph.com/explorer/subgraph/user/subgraph-from-contract-with-abi.
+     https://e.hg.network/subgraph/user/subgraph-from-contract-with-abi.
 
-Make sure to visit the documentation on https://thegraph.com/docs/ for further information.
+Make sure to visit the documentation on https://docs.hg.network for further information.
