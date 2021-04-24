@@ -47,7 +47,7 @@ const generatePackageJson = ({ subgraphName , network}) =>{
           subgraphName,
       },
       dependencies: {
-        '@graphprotocol/graph-cli': `${module.exports.version}`,
+        '@hgdotnetwork/graph-cli': `${module.exports.version}`,
         '@graphprotocol/graph-ts': `0.20.0`,
       },
     }),
