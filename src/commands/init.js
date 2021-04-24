@@ -554,7 +554,7 @@ const initSubgraphFromExample = async (
     `Warnings while cloning example subgraph`,
     async spinner => {
       await system.run(
-        `git clone http://github.com/graphprotocol/example-subgraph ${directory}`,
+        `git clone http://github.com/hgdotnetwork/example-subgraph ${directory}`,
       )
       return true
     },

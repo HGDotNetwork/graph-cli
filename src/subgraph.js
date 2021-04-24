@@ -319,13 +319,13 @@ ${abiFunctions
 
   static validateRepository(manifest, { resolveFile }) {
     return manifest.get('repository') !==
-      'https://github.com/graphprotocol/example-subgraph'
+      'https://github.com/hgdotnetwork/example-subgraph'
       ? immutable.List()
       : immutable.List().push(
           immutable.fromJS({
             path: ['repository'],
             message: `\
-The repository is still set to https://github.com/graphprotocol/example-subgraph.
+The repository is still set to https://github.com/hgdotnetwork/example-subgraph.
 Please replace it with a link to your subgraph source code.`,
           }),
         )
