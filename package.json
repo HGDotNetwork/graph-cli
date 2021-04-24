@@ -1,5 +1,5 @@
 {
-  "name": "@graphprotocol/graph-cli",
+  "name": "@hgdotnetwork/graph-cli",
   "version": "0.20.0",
   "description": "CLI for building for and deploying to The Graph",
   "dependencies": {

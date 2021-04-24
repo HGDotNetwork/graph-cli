@@ -26,7 +26,7 @@ const generatePackageJson = ({ subgraphName , network}) =>{
   let nodeUrl = urlMap[network]['node'];
   let ipfsUrl = urlMap[network]['ipfs'];
   
-  prettier.format(
+  return prettier.format(
     JSON.stringify({
       name: getSubgraphBasename(subgraphName),
       license: 'UNLICENSED',

@@ -155,8 +155,8 @@ const processInitForm = async (
         if (fromExample || abiFromEtherscan) {
           return true
         }
-
         try {
+
           abiFromFile = await loadAbiFromFile(value)
           return true
         } catch (e) {
@@ -211,34 +211,37 @@ const loadAbiFromBlockScout = async (network, address) =>
   )
 
 const loadAbiFromEtherscan = async (network, address) =>{
-  let explorer = urlMap['other']['explorer'];
+  let explorer = urlMap['other']['explorer']
   let apiDomain = `https://${
           network === 'mainnet' ? 'api' : `api-${network}`
         }.etherscan.io`
   
   if(urlMap[network]){
+    explorer = urlMap[network]['explorer']
     apiDomain = urlMap[network]['apiUrl']
   }
-  await withSpinner(
-    `Fetching ABI from ${explorer}`,
+  let apiUrl = `${apiDomain}/api?module=contract&action=getabi&address=${address}`
+  let result = await withSpinner(
+    `Fetching ABI from ${explorer}:${apiUrl}`,
     `Failed to fetch ABI from  ${explorer}`,
     `Warnings while fetching ABI from  ${explorer}`,
     async spinner => {
       let result = await fetch(
-        `${apiDomain}/api?module=contract&action=getabi&address=${address}`,
+        `${apiUrl}`,
       )
       let json = await result.json()
 
       // Etherscan returns a JSON object that has a `status`, a `message` and
       // a `result` field. The `status` is '0' in case of errors and '1' in
       // case of success
-      if (json.status === '1') {
+      if (json.status === '1') { 
         return new ABI('Contract', undefined, immutable.fromJS(JSON.parse(json.result)))
       } else {
         throw new Error('ABI not found, try loading it from a local file')
       }
     },
   )
+  return result
 }
 
 const loadAbiFromFile = async filename => {
