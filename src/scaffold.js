@@ -301,7 +301,7 @@ const generateScaffold = async (
   spinner,
 ) => {
   step(spinner, 'Generate subgraph from ABI')
-  let packageJson = generatePackageJson({ subgraphName })
+  let packageJson = generatePackageJson({ subgraphName, network })
   let manifest = generateManifest({ abi, address, network, contractName })
   let schema = generateSchema({ abi, indexEvents, contractName })
   let mapping = generateMapping({ abi, subgraphName, indexEvents, contractName })
