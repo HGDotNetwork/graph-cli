@@ -7,9 +7,16 @@ const urlMap = {
       "apiUrl": "https://api.hecoinfo.com",
       "explorer": "https://hecoinfo.com"
     },
+    "hsc":{
+      "node": "https://hdeploy.hg.network",
+      "ipfs": "https://f.hg.network",
+      "deployUrl": "https://hdeploy.hg.network",
+      "apiUrl": "https://api.hscscan.com",
+      "explorer": "https://hscscan.com"
+    },
     "bsc":{
       "node": "https://pdeploy.hg.network",
-      "ipfs": "https://pf.hg.network",
+      "ipfs": "https://f.hg.network",
       "deployUrl": "https://pdeploy.hg.network",
       "apiUrl": "https://api.bscscan.com",
       "explorer": "https://bscscan.com"
